@@ -1,0 +1,23 @@
+version: "3"
+services: 
+    graphite:
+        image: graphiteapp/graphite-statsd
+        restart: always
+        ports: 
+            - "8080:80"
+            - "2003-2004:2003-2004"
+            - "2023-2024:2023-2024"
+            - "8125:8125/udp"
+            - "8126:8126"
+
+    graphite_aqmo_puller:
+        build: ./graphite_aqmo_puller/
+        restart: always
+        depends_on: 
+            - graphite
+        links: 
+            - "graphite:graphite"
+        environment: 
+            - CARBON_SERVER=graphite
+            - CARBON_PICKLE_PORT=2004
+            - AUTH=auth-here
